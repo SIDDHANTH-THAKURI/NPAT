@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Nunito', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: radial-gradient(ellipse at 60% 20%, #fddcb5 0%, #fef3e2 60%, #fdd9b0 100%);
+  background-attachment: fixed;
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100dvh;
+}
+
+.game-card {
+  @apply bg-white/70 backdrop-blur-sm rounded-[24px] shadow-md;
+}
+
+.btn-primary {
+  @apply font-baloo font-bold text-white bg-purple-400 hover:bg-purple-500 active:scale-95
+         rounded-[50px] px-6 py-3 transition-all duration-150 shadow-sm;
+}
+
+.btn-secondary {
+  @apply font-baloo font-bold text-purple-500 bg-white hover:bg-purple-50 active:scale-95
+         rounded-[50px] px-6 py-3 transition-all duration-150 shadow-sm border border-purple-200;
+}
+
+.input-field {
+  @apply w-full rounded-[16px] border-2 border-purple-200 bg-white/80 px-4 py-3
+         font-nunito text-gray-700 placeholder-gray-400 focus:outline-none focus:border-purple-400
+         transition-colors duration-150;
+}
+
+/* Letter bounce animation */
+@keyframes bounceIn {
+  0%   { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.2) rotate(3deg); opacity: 1; }
+  80%  { transform: scale(0.9) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.letter-bounce {
+  animation: bounceIn 0.5s ease-out forwards;
+}
+
+@keyframes timerPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+.timer-urgent {
+  animation: timerPulse 0.7s ease-in-out infinite;
+}
+
+/* Podium animation */
+@keyframes riseUp {
+  from { transform: scaleY(0); opacity: 0; }
+  to   { transform: scaleY(1); opacity: 1; }
+}
+
+.podium-block {
+  transform-origin: bottom;
+  animation: riseUp 0.6s ease-out forwards;
+}
+
+/* Reaction pop */
+@keyframes reactionPop {
+  0%   { transform: translateY(0) scale(0.5); opacity: 1; }
+  70%  { transform: translateY(-60px) scale(1.3); opacity: 1; }
+  100% { transform: translateY(-80px) scale(1); opacity: 0; }
+}
+
+.reaction-pop {
+  animation: reactionPop 1.2s ease-out forwards;
+  pointer-events: none;
+  position: fixed;
+  font-size: 2rem;
+  z-index: 9999;
+}

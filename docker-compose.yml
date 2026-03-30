@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: npat
+      POSTGRES_PASSWORD: npat_secret
+      POSTGRES_DB: npat_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U npat -d npat_db']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    environment:
+      DATABASE_URL: postgresql://npat:npat_secret@postgres:5432/npat_db
+      PORT: 3001
+      CLIENT_ORIGIN: http://localhost:3001
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

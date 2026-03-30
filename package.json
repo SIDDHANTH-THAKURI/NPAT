@@ -1,0 +1,20 @@
+{
+  "name": "npat-game",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "src/client",
+    "src/server"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=src/server\" \"npm run dev --workspace=src/client\"",
+    "build": "npm run build --workspace=src/client",
+    "start": "npm run start --workspace=src/server",
+    "db:generate": "npm run db:generate --workspace=src/server",
+    "db:migrate": "npm run db:migrate --workspace=src/server",
+    "db:studio": "npm run db:studio --workspace=src/server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
