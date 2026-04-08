@@ -17,6 +17,8 @@ RUN npm run build --workspace=src/client
 # ── Stage 2: Build server + generate Prisma client ──────────────────────────
 FROM node:20-alpine AS server-builder
 
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 COPY package.json ./
@@ -33,6 +35,8 @@ RUN cd src/server && npx prisma generate --schema=../prisma/schema.prisma
 
 # ── Stage 3: Production image ────────────────────────────────────────────────
 FROM node:20-alpine AS production
+
+RUN apk add --no-cache openssl
 
 WORKDIR /app
 
