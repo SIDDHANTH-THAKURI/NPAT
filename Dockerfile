@@ -1,23 +1,20 @@
 # ── Stage 1: Build React client ─────────────────────────────────────────────
-FROM node:20-alpine AS client-builder
+FROM node:20-slim AS client-builder
 
 WORKDIR /app
 
-# Copy workspace manifests first (cache-friendly)
 COPY package.json ./
 COPY src/client/package.json ./src/client/
 
-# Install client deps
 RUN npm install --workspace=src/client
 
-# Copy client source and build
 COPY src/client ./src/client
 RUN npm run build --workspace=src/client
 
 # ── Stage 2: Build server + generate Prisma client ──────────────────────────
-FROM node:20-alpine AS server-builder
+FROM node:20-slim AS server-builder
 
-RUN apk add --no-cache openssl
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -27,31 +24,26 @@ COPY src/prisma/schema.prisma ./src/prisma/
 
 RUN npm install --workspace=src/server
 
-# Copy server source
 COPY src/server ./src/server
 
-# Generate Prisma client
 RUN cd src/server && npx prisma generate --schema=../prisma/schema.prisma
 
 # ── Stage 3: Production image ────────────────────────────────────────────────
-FROM node:20-alpine AS production
+FROM node:20-slim AS production
 
-RUN apk add --no-cache openssl
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Only production deps
 COPY package.json ./
 COPY src/server/package.json ./src/server/
 COPY src/prisma/schema.prisma ./src/prisma/
 
 RUN npm install --workspace=src/server --omit=dev
 
-# Copy built artifacts
 COPY --from=client-builder /app/src/client/dist ./src/client/dist
 COPY --from=server-builder /app/src/server ./src/server
 
-# Prisma migration entrypoint
 COPY src/server/entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
